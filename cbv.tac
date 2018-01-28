@@ -3,6 +3,7 @@ from twisted.internet import protocol, reactor
 from twisted.application.internet import TCPServer
 from twisted.application.service import Application
 from twisted.internet.error import ProcessExitedAlready
+from twisted.application import strports
 
 class UmixPipeProtocol(protocol.ProcessProtocol):
     def __init__(self, net_proto):
@@ -44,7 +45,7 @@ class UmixNetProtocol(TelnetProtocol):
 
 factory = protocol.ServerFactory()
 factory.protocol = lambda: TelnetTransport(UmixNetProtocol)
-service = TCPServer(23, factory)
+service = strports.service('systemd:domain=INET:index=0', factory)
 
-application = Application("CBV telnet Server")
+application = Application("CBV application")
 service.setServiceParent(application)
