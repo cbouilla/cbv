@@ -3,3 +3,6 @@ Description=CBV socket
 
 [Socket]
 ListenStream=23
+
+[Install]
+WantedBy=sockets.target
