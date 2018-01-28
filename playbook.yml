@@ -1,6 +1,7 @@
 ---
 - hosts: cbv.fil.cool
   remote_user: admin
+  become_method: sudo
   tasks:
 
   - name: required debian packages are present
