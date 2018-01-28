@@ -8,6 +8,8 @@
     become: true
     with_items:
       - debian-goodies
+      - make
+      - gcc
       - git
 
   - name: unwanted debian packages are absent
@@ -27,8 +29,9 @@
   
   - name: codex is unarchived
     unarchive:
-      src:  /home/admin/cbv/codex.um.gz
-      dest: /home/admin/cbv/codex.um
+      src:  /home/admin/cbv/codex.tar.gz
+      dest: /home/admin/cbv/
+      creates: /home/admin/cbd/codex.um
       remote_src: yes
 
   - name: twisted is installed
