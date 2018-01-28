@@ -1,5 +1,7 @@
 [Unit]
 Description=CBV telnet server
+Requires=cbv.socket
+After=network.target
 
 [Service]
 Environment="PYTHONPATH=."

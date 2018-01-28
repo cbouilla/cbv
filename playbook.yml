@@ -1,5 +1,5 @@
 ---
-- hosts: 54.156.179.48
+- hosts: cbv.fil.cool
   remote_user: admin
   tasks:
 
@@ -11,13 +11,14 @@
       - make
       - gcc
       - git
+      - python3-pip
 
   - name: unwanted debian packages are absent
     apt: pkg=python3-twisted state=absent
     become: true
 
 
-  - name: custom stratum server at latest version
+  - name: pull CBV server source
     git: repo=https://github.com/cbouilla/cbv.git
          dest=/home/admin/cbv
     notify:
@@ -37,20 +38,30 @@
   - name: twisted is installed
     become: true
     pip:
+      executable: pip3
       name: twisted
       version: 17.9
     notify:
       - restart cbv server
 
- # systemd config
   - name: systemd service file is present
     become: true
     copy: 
-      src: stratum.service 
+      src: cbv.service 
       dest: /etc/systemd/system/
     notify:
       - reload systemd
       - restart cbv server
+
+  - name: systemd socket file is present
+    become: true
+    copy: 
+      src: cbv.socket
+      dest: /etc/systemd/system/
+    notify:
+      - reload systemd
+      - restart cbv server
+
 
   - name: cbv server is running
     become: true
