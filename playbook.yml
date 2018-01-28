@@ -1,0 +1,72 @@
+---
+- hosts: 54.156.179.48
+  remote_user: admin
+  tasks:
+
+  - name: required debian packages are present
+    apt: pkg={{ item }} state=present
+    become: true
+    with_items:
+      - debian-goodies
+      - git
+
+  - name: unwanted debian packages are absent
+    apt: pkg=python3-twisted state=absent
+    become: true
+
+
+  - name: custom stratum server at latest version
+    git: repo=https://github.com/cbouilla/cbv.git
+         dest=/home/admin/cbv
+    notify:
+      - restart cbv server
+
+  - name: interpreter is compiled
+    make:
+      chdir: /home/admin/cbv
+  
+  - name: codex is unarchived
+    unarchive:
+      src:  /home/admin/cbv/codex.um.gz
+      dest: /home/admin/cbv/codex.um
+      remote_src: yes
+
+  - name: twisted is installed
+    become: true
+    pip:
+      name: twisted
+      version: 17.9
+    notify:
+      - restart cbv server
+
+ # systemd config
+  - name: systemd service file is present
+    become: true
+    copy: 
+      src: stratum.service 
+      dest: /etc/systemd/system/
+    notify:
+      - reload systemd
+      - restart cbv server
+
+  - name: cbv server is running
+    become: true
+    systemd:
+      name: cbv
+      daemon_reload: yes
+      state: started
+      enabled: yes
+
+
+  handlers:
+  - name: restart cbv server
+    become: true
+    systemd:
+      name: cbv
+      state: restarted
+
+  - name: reload systemd
+    become: true
+    systemd:
+      daemon_reload: yes
+  

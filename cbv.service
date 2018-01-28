@@ -1,0 +1,22 @@
+[Unit]
+Description=CBV telnet server
+
+[Service]
+Environment="PYTHONPATH=."
+
+ExecStart=/usr/local/bin/twistd \
+    --nodaemon \
+    --pidfile= \
+    --python=cbv.tac
+
+WorkingDirectory=/home/admin/cbv
+
+User=admin
+Group=admin
+
+Restart=always
+
+
+
+[Install]
+WantedBy=multi-user.target
