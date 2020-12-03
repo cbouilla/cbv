@@ -45,7 +45,7 @@ class UmixNetProtocol(TelnetProtocol):
 
 factory = protocol.ServerFactory()
 factory.protocol = lambda: TelnetTransport(UmixNetProtocol)
-service = strports.service('systemd:domain=INET:index=0', factory)
+service = strports.service('systemd:domain=INET:index=0', factory)  # switch to tcp:port=23 if not using systemd
 
 application = Application("CBV application")
 service.setServiceParent(application)
